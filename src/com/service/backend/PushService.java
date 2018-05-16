@@ -47,9 +47,9 @@ public class PushService extends Daemon {
 	 * 檢查網路連接是否正常,如果正常則繼續執行保持遠端連線動作,
 	 * 如果網路連接異常,則待機等待下一次輪巡
 	 * 
-	 * @param intent 意圖
+	 * @param intent
 	 * @param flags
-	 * @param startId 調用次數
+	 * @param startId
 	 */
 	@SuppressLint("InlinedApi")
 	@Override
@@ -98,6 +98,7 @@ public class PushService extends Daemon {
 					break;
 				case Client.NOT_CHECKEDIN_YET:
 				case Client.SOCKET_UNUSUAL:
+					client = null;
 					initClient();
 					break;
 			}
