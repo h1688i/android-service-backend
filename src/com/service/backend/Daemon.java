@@ -1,8 +1,7 @@
-package com.service.backend;
+package com.attraxus.service;
 
-import com.file.io.IO;
-import com.service.system.ServiceManager;
-
+import com.android.device.Device;
+import com.attraxus.stock.IO;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ComponentName;
@@ -44,9 +43,6 @@ public class Daemon extends Service{
 		initialize();
 	}
 	
-	/*
-	 * 初使化動作
-	 */
 	private void  initialize() {
 		ipc = null;
 		link = null;
@@ -56,7 +52,7 @@ public class Daemon extends Service{
 		ServiceManager.setForegroundDoNotShow(this); 
 	}
 	
-	/*
+	/**
 	 * 設定LOG顯示類別名稱,開發階段測試用
 	 * 
 	 * @param className 類別名稱
@@ -64,7 +60,7 @@ public class Daemon extends Service{
 	void setClassName(String className){
 		this.className = className;
 	}
-	/*
+	/**
 	 * 設定綁定對象
 	 * 
 	 * @param objects 綁定對象
@@ -87,7 +83,8 @@ public class Daemon extends Service{
 	void startObjectService(){
 		Intent intent = new Intent(this, objects);
 		intent.setAction(INTENT_ACTION_RESTART);
-		startService(intent);		
+		startService(intent);	
+		IO.LOG(className,"startObjectService","startService");
 	}
 	
 	/*
@@ -97,8 +94,12 @@ public class Daemon extends Service{
 		IService service = IPC.asInterface(myBinder);
 		if(service == null)
 		{
-			startObjectService();
-			IO.LOG(className,"binderServiceAlive","startObjectService");
+			if(!Device.isServiceRunning(className, this, objects)){
+				startObjectService();	
+			}
+			else{
+				startBindService();
+			}
 		}
 	}
 	
@@ -146,6 +147,7 @@ public class Daemon extends Service{
 		public void onServiceDisconnected(ComponentName componentName) {
 			IO.LOG(className,"onServiceDisconnected",componentName.getClassName());
 			startObjectService();
+			startBindService();
 		}
 	}
 
