@@ -31,7 +31,8 @@
         </activity>
         
         <!-- 核心服務  -->
-		<service android:name="com.service.backend.CoreService"  	
+		<service android:name="com.service.backend.CoreService" 
+			 android:process=":core" 
 		         android:exported="false">
 		</service>
 		<!-- 推送服務  -->
