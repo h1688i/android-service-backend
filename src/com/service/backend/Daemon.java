@@ -1,7 +1,8 @@
-package com.attraxus.service;
+package com.service.backend;
 
-import com.android.device.Device;
-import com.attraxus.stock.IO;
+import com.file.io.IO;
+import com.service.system.Device;
+import com.service.system.ServiceManager;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ComponentName;
@@ -90,15 +91,19 @@ public class Daemon extends Service{
 	/*
 	 * 檢查對綁定象服務是否存在
 	 */
+	@SuppressLint("InlinedApi")
 	void binderServiceIsAlive(){
 		IService service = IPC.asInterface(myBinder);
+		//與通信對象失去聯繫
 		if(service == null)
 		{
 			if(!Device.isServiceRunning(className, this, objects)){
+				stopService(new Intent(this, objects));
 				startObjectService();	
 			}
-			else{
-				startBindService();
+			else
+			{
+				bindService(new Intent(this, objects), link, Context.BIND_IMPORTANT);
 			}
 		}
 	}
@@ -147,7 +152,6 @@ public class Daemon extends Service{
 		public void onServiceDisconnected(ComponentName componentName) {
 			IO.LOG(className,"onServiceDisconnected",componentName.getClassName());
 			startObjectService();
-			startBindService();
 		}
 	}
 
